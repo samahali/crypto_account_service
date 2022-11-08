@@ -33,7 +33,7 @@ fi
 message_welcome "Restoring the '${MYSQL_DATABASE}' database from the '${backup_filename}' backup..."
 
 if [[ "${MYSQL_USER}" == "mysql" ]]; then
-    message_error "Restoring as 'postgres' user is not supported. Assign 'MYSQL_USER' env with another one and try again."
+    message_error "Restoring as 'mysql' user is not supported. Assign 'MYSQL_USER' env with another one and try again."
     exit 1
 fi
 
@@ -50,6 +50,6 @@ message_info "Creating a new database..."
 createdb --owner="${MYSQL_USER}"
 
 message_info "Applying the backup to the new database..."
-gunzip -c "${backup_filename}" | psql "${MYSQL_DATABASE}"
+gunzip -c "${backup_filename}" | mysql "${MYSQL_DATABASE}"
 
 message_success "The '${MYSQL_DATABASE}' database has been restored from the '${backup_filename}' backup."

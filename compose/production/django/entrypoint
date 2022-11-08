@@ -31,9 +31,6 @@ start = time.time()
 
 while True:
     try:
-        sys.stderr.write("=======================")
-        sys.stderr.write("mysql://{}:{}@{}:{}/{}".format(MYSQL_USER,MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE))
-        sys.stderr.write("=======================")
         pymysql.connect(host="${MYSQL_HOST}",
         user="${MYSQL_USER}",
         password="${MYSQL_PASSWORD}",
