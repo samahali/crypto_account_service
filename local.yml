@@ -1,0 +1,106 @@
+version: '3'
+
+volumes:
+#  crypto_account_service_local_postgres_data: {}
+#  crypto_account_service_local_postgres_data_backups: {}
+  crypto_account_service_local_mysql_data: {}
+  crypto_account_service_local_mysql_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: crypto_account_service_local_django
+    container_name: crypto_account_service_local_django
+    platform: linux/x86_64
+    depends_on:
+#      - postgres
+      - mysql
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+#      - ./.envs/.local/.postgres
+      - ./.envs/.local/.mysql
+    ports:
+      - "8000:8000"
+    command: /start
+
+#  postgres:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/postgres/Dockerfile
+#    image: crypto_account_service_production_postgres
+#    container_name: crypto_account_service_local_postgres
+#    volumes:
+#      - crypto_account_service_local_postgres_data:/var/lib/postgresql/data:Z
+#      - crypto_account_service_local_postgres_data_backups:/backups:z
+#    env_file:
+#      - ./.envs/.local/.postgres
+  mysql:
+    build:
+      context: .
+      dockerfile: ./compose/production/mysql/Dockerfile
+    ports:
+      - "3306:3306"
+    image: crypto_account_service_local_mysql
+    container_name: crypto_account_service_local_mysql
+    volumes:
+#      - crypto_account_service_local_mysql_data:/var/lib/mysql
+      - crypto_account_service_local_mysql_data:/var/lib/mysql/data:Z
+#      - crypto_account_service_local_mysql_data_backups:/backups:z
+#      - crypto_account_service_local_mysql_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.mysql
+#    restart: always
+
+  docs:
+    image: crypto_account_service_local_docs
+    container_name: crypto_account_service_local_docs
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./crypto_account_service:/app/crypto_account_service:z
+    ports:
+      - "9000:9000"
+    command: /start-docs
+
+  redis:
+    image: redis:6
+    container_name: crypto_account_service_local_redis
+
+  celeryworker:
+    <<: *django
+    image: crypto_account_service_local_celeryworker
+    container_name: crypto_account_service_local_celeryworker
+    depends_on:
+      - redis
+      - mysql
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: crypto_account_service_local_celerybeat
+    container_name: crypto_account_service_local_celerybeat
+    depends_on:
+      - redis
+      - mysql
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: crypto_account_service_local_flower
+    container_name: crypto_account_service_local_flower
+    ports:
+      - "5555:5555"
+    command: /start-flower
