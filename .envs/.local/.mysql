@@ -1,9 +1,8 @@
-MYSQL_ROOT_PASSWORD=root
-MYSQL_USER=root
-MYSQL_PASSWORD=root
 MYSQL_HOST=mysql
 MYSQL_PORT=3306
 MYSQL_DATABASE=technical_drawings_database
-MYSQL_ALLOW_EMPTY_PASSWORD=empty
-MYSQL_RANDOM_ROOT_PASSWORD=root
+MYSQL_USER=root
+MYSQL_PASSWORD=root
+MYSQL_ROOT_PASSWORD=root
+DATABASE_URL=mysql://root:root@mysql:3306/technical_drawings_database
 

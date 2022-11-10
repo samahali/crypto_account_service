@@ -46,6 +46,7 @@ services:
     ports:
       - "3306:3306"
     image: crypto_account_service_local_mysql
+    command: --default-authentication-plugin=mysql_native_password --mysqlx=0
     container_name: crypto_account_service_local_mysql
     volumes:
       - crypto_account_service_local_mysql_data:/var/lib/mysql

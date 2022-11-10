@@ -4,8 +4,6 @@ Base settings to build other settings files upon.
 from pathlib import Path
 
 import environ
-import pymysql
-pymysql.install_as_MySQLdb()
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # crypto_account_service/
